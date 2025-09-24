@@ -1,6 +1,18 @@
 import express from "express";
+import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
-const PORT = 3000;
+const UserModel = mongoose.model("User", {
+  username: String,
+  fullname: String,
+  email: String,
+  password: String,
+  phone: String,
+});
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+const PORT = 4000;
 
 const app = express();
 
@@ -10,7 +22,7 @@ app.get("/", (req, res) => {
   res.send("Hi mom");
 });
 
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
   if (!req.body) {
     return res.status(400).send({ message: "Body required" });
   }
@@ -28,9 +40,99 @@ app.post("/signup", (req, res) => {
     return res.status(400).send({ message: "Username required" });
   }
 
-  return res.send({ message: "Welcome to instagram" });
+  let email = null;
+  let phone = null;
+
+  if (emailRegex.test(body.credential)) {
+    email = body.credential;
+  }
+  if (!isNaN(Number(body.credential))) {
+    phone = body.credential;
+  }
+
+  if (!email && !phone) {
+    return res
+      .status(400)
+      .send({ message: "Credential must be Email or Phone number!" });
+  }
+
+  if (body.password.length < 8) {
+    return res
+      .status(400)
+      .send({ message: "Password must be greater than 8 characters" });
+  }
+
+  if (passwordRegex.test(body.password)) {
+    return res.status(400).send({
+      message:
+        "Password must include Upper and Lowercase letters and digit with special characters",
+    });
+  }
+
+  const existingUser = await UserModel.findOne({ username: body.username });
+
+  if (existingUser) {
+    return res.status(400).send({
+      message: `User with username "${body.username}" already exists`,
+    });
+  }
+
+  const hashedPassword = bcrypt.hashSync(body.password, 10);
+
+  const newUser = {
+    fullname: body.fullname,
+    username: body.username,
+    email,
+    phone,
+    password: hashedPassword,
+  };
+
+  const user = new UserModel(newUser);
+  await user.save();
+
+  return res.send({ message: "Welcome to instagram", body: user });
+});
+
+app.post("/signin", async (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({ message: "Body required" });
+  }
+  const body = req.body;
+  if (!body.credential) {
+    return res.status(400).send({ message: "Credential required" });
+  }
+  if (!body.password) {
+    return res.status(400).send({ message: "Password required" });
+  }
+
+  // const user = users.find((item) => {
+  //   return item.email === body.credential || item.phone === body.credential || item.username === body.credential;
+  // });
+
+  const user = await UserModel.find({
+    $or: [
+      { email: body.credential },
+      { phone: body.credential },
+      { username: body.credential },
+    ],
+  });
+
+  if (!user) {
+    return res.status(400).send({ message: "Wrong credentials!" });
+  }
+
+  const isCorrectPassword = bcrypt.compareSync(body.password, user.password);
+
+  if (!isCorrectPassword) {
+    return res.status(400).send({ message: "Wrong password!" });
+  }
+
+  return res.send({ message: "You are signed in", body: user });
 });
 
 app.listen(PORT, () => {
+  mongoose.connect(
+    "mongodb+srv://dashoe681_db_user:o9MjlYQiO0b0QeUb@cluster0.knkcfnh.mongodb.net/instagram"
+  );
   console.log(`Your app is running on http://localhost:${PORT}`);
 });

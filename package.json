@@ -11,7 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
-    "nodemon": "^3.1.10"
+    "mongoose": "^8.18.2",
+    "nanoid": "^5.1.6",
+    "nodemon": "^3.1.10",
+    "regex": "^6.0.1"
   }
 }
