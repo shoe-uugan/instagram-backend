@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import PostRouter from "./routers/post.router.mjs";
 import AuthRouter from "./routers/auth.router.mjs";
 
+
 dotenv.config();
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
 
 app.use("/posts", PostRouter);
 
-app.use("/posts", AuthRouter);
+app.use(AuthRouter);
 
 
 app.listen(PORT, () => {

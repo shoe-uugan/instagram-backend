@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import express from "express";
 import { UserModel } from "../models/user.model.mjs";
+import jwt from "jsonwebtoken"
 
 const router = express.Router();
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,6 +101,8 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signin", async (req, res) => {
+  console.log("help");
+
   if (!req.body) {
     return res.status(400).send({ message: "Body required" });
   }
@@ -136,7 +139,36 @@ router.post("/signin", async (req, res) => {
     return res.status(400).send({ message: "Wrong password!" });
   }
 
-  return res.send({ message: "You are signed in", body: user });
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1m",
+  });
+
+  return res.send({ message: "You are signed in", body: token });
+});
+
+router.get("/me", async (req, res) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res.status(401).send({ message: "You are not authenticated" });
+  }
+  const token = authorization.split(" ")[1];
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const id = payload.id;
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      return res.status(403).send({ message: "Session user not found!" });
+    }
+
+    return res.status(200).send({ message: "Success", body: user });
+  } catch (error) {
+    console.log("HI");
+    return res
+      .status(401)
+      .send({ message: "Unsuccess", body: JSON.stringify(error, null, 2) });
+  }
 });
 
 export default router;
