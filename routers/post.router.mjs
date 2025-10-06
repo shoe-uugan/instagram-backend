@@ -57,7 +57,7 @@ router.put("/:id", async (req, res) => {
   }
   const { description, imageUrl } = req.body;
 
-  await PostModel.updateOne({ _id: postId }, { description, imageUrl });
+  await PostModel.updateOne({ _id: postId }, {description, imageUrl });
 
   return res.send({
     message: "Successfully updated post",
