@@ -140,7 +140,7 @@ router.post("/signin", async (req, res) => {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "20m",
+    expiresIn: "1h",
   });
 
   return res.send({ message: "You are signed in", body: token });
@@ -156,8 +156,8 @@ router.get("/me", async (req, res) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     const id = payload.id;
-    const user = await UserModel.findById(id);
-
+    const user = await UserModel.findById(id).populate("posts");
+    
     if (!user) {
       return res.status(403).send({ message: "Session user not found!" });
     }

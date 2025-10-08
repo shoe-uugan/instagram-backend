@@ -1,9 +1,18 @@
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
-export const PostModel = mongoose.model("Post", {
-  description: String,
-  imageUrl: String,
+const PostSchema = new mongoose.Schema(
+  {
+    _id: { type: String, default: nanoid() },
+    description: { type: String },
+    imageUrl: { type: String },
+    createdBy: { type: String, ref: "User" },
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
+  },
+  { timestamps: true }
+);
 
-  createdAt: Date,
-  updatedAt: Date,
-});
+
+
+export const PostModel = mongoose.model("Post", PostSchema);
