@@ -148,6 +148,7 @@ router.post("/signin", async (req, res) => {
 
 router.get("/me", async (req, res) => {
   const authorization = req.headers.authorization;
+    // const localToken = localStorage.getItem("authToken");
   if (!authorization) {
     return res.status(401).send({ message: "You are not authenticated" });
   }
