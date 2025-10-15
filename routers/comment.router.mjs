@@ -1,6 +1,6 @@
 import express from "express";
 import { PostModel } from "../models/post.model.mjs";
-import { CommentModel } from "../models/post-comment.model.mjs";
+import { CommentModel } from "../models/comment.model.mjs";
 import { UserModel } from "../models/user.model.mjs";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
@@ -13,9 +13,9 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-    const postId= req.params.id
+    // const postId= req.params.id
   const commentId = req.params.id;
-  const comment = await CommentModel.findById(commentId, postId);
+  const comment = await CommentModel.findById(commentId);
   if (!comment) {
     return res.status(404).send({ message: "Post not found!" });
   }
@@ -63,13 +63,13 @@ router.post("/", async (req, res) => {
     imageUrl,
     createdBy: user._id,
   });
-  return res.send({ message: "Post created successfully", body: comment });
+  return res.send({ message: "Comment created successfully", body: comment });
 });
 
 router.delete("/:id", async (req, res) => {
-     const postId = req.params.id;
+    //  const postId = req.params.id;
   const commentId = req.params.id;
-  const comment = await CommentModel.findById(commentId, postId);
+  const comment = await CommentModel.findById(commentId);
   if (!comment) {
     return res.status(404).send({ message: "Post not found!" });
   }
@@ -78,9 +78,9 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-     const postId = req.params.id;
+    //  const postId = req.params.id;
   const commentId = req.params.id;
-  const comment = await CommentModel.findById(commentId, postId);
+  const comment = await CommentModel.findById(commentId);
   if (!comment) {
     return res.status(404).send({ message: "Post not found!" });
   }
@@ -89,11 +89,11 @@ router.put("/:id", async (req, res) => {
   }
   const { description } = req.body;
 
-  await CommentModel.updateOne({ _id: commentId, post: postId }, {description});
+  await CommentModel.updateOne({ _id: commentId, }, {description});
 
   return res.send({
-    message: "Successfully updated post",
-    body: { ...post, description, imageUrl },
+    message: "Successfully updated comment",
+    body: { ...comment, description },
   });
 });
 
