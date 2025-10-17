@@ -29,8 +29,7 @@ app.use("/posts", PostRouter);
 
 app.use(AuthRouter);
 
-app.use("/omments", CommentRouter)
-
+app.use("/comments", CommentRouter)
 app.listen(PORT, () => {
   mongoose.connect(process.env.MONGO_URL);
   console.log(`Your  app is running on http://localhost:${PORT}`);
