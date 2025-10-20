@@ -6,12 +6,8 @@ import dotenv from "dotenv";
 
 import PostRouter from "./routers/post.router.mjs";
 import AuthRouter from "./routers/auth.router.mjs";
-import CommentRouter from "./routers/comment.router.mjs";
 
 dotenv.config();
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 const PORT = 5500;
 
@@ -29,7 +25,6 @@ app.use("/posts", PostRouter);
 
 app.use(AuthRouter);
 
-app.use("/comments", CommentRouter)
 app.listen(PORT, () => {
   mongoose.connect(process.env.MONGO_URL);
   console.log(`Your  app is running on http://localhost:${PORT}`);
