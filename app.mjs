@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 
 import PostRouter from "./routers/post.router.mjs";
 import AuthRouter from "./routers/auth.router.mjs";
+import UserRouter from "./routers/user.router.mjs";
 
 dotenv.config();
 
@@ -24,6 +25,8 @@ app.get("/", (req, res) => {
 app.use("/posts", PostRouter);
 
 app.use(AuthRouter);
+
+app.use("/users", UserRouter);
 
 app.listen(PORT, () => {
   mongoose.connect(process.env.MONGO_URL);
