@@ -55,11 +55,12 @@ router.post("/", authMiddleware, async (req, res) => {
   if (!imageUrl) {
     return res.status(400).send({ message: "imageUrl required!" });
   }
+ 
   const post = await PostModel.create({
     _id: nanoid(),
     description,
     imageUrl,
-    createdBy: req.req.user._id,
+    createdBy: req.user._id,
   });
   return res.send({ message: "Post created successfully", body: post });
 });
@@ -92,6 +93,7 @@ router.put("/:id", async (req, res) => {
     body: { ...post, description, imageUrl },
   });
 });
+
 router.post("/:postId/comments", authMiddleware, async (req, res) => {
   const postId = req.params.postId;
 
@@ -122,7 +124,6 @@ router.post("/:postId/comments", authMiddleware, async (req, res) => {
   return res.status(200).send(newComment);
 });
 
-
 router.post("/:postId/like", authMiddleware, async (req, res) => {
   const postId = req.params.postId;
 
@@ -145,14 +146,13 @@ router.post("/:postId/like", authMiddleware, async (req, res) => {
 
     return res
       .status(200)
-      .send({ message: "Successfully liked", isLiked: true });
+      .send({ message: "Амжилттай лайк дарлаа", isLiked: true });
   }
 
   await PostLikeModel.findOneAndDelete(existingLike._id);
   return res
     .status(200)
-    .send({ message: "Succesfully disliked", isLiked: false });
+    .send({ message: "Амжилттай лайкаа буцаалаа", isLiked: false });
 });
-
 
 export default router;

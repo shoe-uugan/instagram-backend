@@ -22,6 +22,20 @@ UserSchema.virtual("posts", {
   foreignField: "createdBy",
 });
 
+
+UserSchema.virtual("followings", {
+  ref: "UserFollow",
+  localField: "_id",
+  foreignField: "createdBy",
+});
+
+UserSchema.virtual("followers", {
+  ref: "UserFollow",
+  localField: "_id",
+  foreignField: "user",
+});
+
+
 UserSchema.set("toObject", { virtuals: true });
 UserSchema.set("toJSON", { virtuals: true });
 
