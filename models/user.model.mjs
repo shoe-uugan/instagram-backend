@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema(
     createdAt: { type: Date },
     updatedAt: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
+
 );
 
 UserSchema.virtual("posts", {
@@ -22,6 +23,12 @@ UserSchema.virtual("posts", {
   foreignField: "createdBy",
 });
 
+
+UserSchema.virtual("profile", {
+  ref: "Profile",
+  localField: "_id",
+  foreignField: "createdBy",
+});
 
 UserSchema.virtual("followings", {
   ref: "UserFollow",

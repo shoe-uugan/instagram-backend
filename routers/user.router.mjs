@@ -54,7 +54,7 @@ router.post("/:username/follow", authMiddleware, async (req, res) => {
       .status(200)
       .send({ message: "Followed successfully", isLiked: true });
   }
-
+zzz
   await UserFollowModel.findOneAndDelete(existingFollow._id);
   return res
     .status(200)
